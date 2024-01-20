@@ -18,52 +18,45 @@ plt.figure(figsize=(10, 6))
 background_image_path = "R.jfif"
 st.image(background_image_path, use_column_width=True)  # Adjust 'use_column_width' based on your preference
 
+# Title and Description
 st.markdown("# Predictive Maintenance Tool")
 st.title("Machine Learning in Equipment Failures Prevention")
-st.write("In manufacturing industry, the high operating expenditures and operational disruption such as machine failures had impacted on production costs and delivery time which in turn leads to poor customer service.")
+st.write("In the manufacturing industry, high operating expenditures and operational disruptions, such as machine failures, impact production costs and delivery times, leading to poor customer service.")
 
+# User Customization
 st.title('Customize your target.')
-Variant = st.selectbox("Type of Product Quality Variant", options=list("H","M","L"))  # Default index can be adjusted
+quality_variant = st.selectbox("Type of Product Quality Variant", options=["High", "Medium", "Low"])
 
-Air_Temperature = st.slider("Air Temperature", min_value=0.0, max_value=24.0, value=12.0, step=0.1)
-Process_Temperature = st.slider("Process Temperature", min_value=0.0, max_value=24.0, value=12.0, step=0.1)
-Torque = st.slider("Torque", min_value=0.0, max_value=24.0, value=12.0, step=0.1)
-Speed = st.slider("Rotational Speed", min_value=0.0, max_value=24.0, value=12.0, step=0.1)
+air_temperature = st.slider("Air Temperature", min_value=0.0, max_value=24.0, value=12.0, step=0.1)
+process_temperature = st.slider("Process Temperature", min_value=0.0, max_value=24.0, value=12.0, step=0.1)
+torque = st.slider("Torque", min_value=0.0, max_value=24.0, value=12.0, step=0.1)
+speed = st.slider("Rotational Speed", min_value=0.0, max_value=24.0, value=12.0, step=0.1)
 
 # Coefficients
-coef_Air_Temperature = 64.977232
-coef_Process_Temperature = 17.826341
-coef_Torque = 64.977232
-coef_Speed = 17.826341
+coef_air_temperature = 64.977232
+coef_process_temperature = 17.826341
+coef_torque = 64.977232
+coef_speed = 17.826341
 
-Tool_wear = coef_Air_Temperature * Air_Temperature + coef_Process_Temperature * Process_Temperature + coef_Torque * Torque + coef_Speed * Speed
+# Calculate Tool Wear
+tool_wear = coef_air_temperature * air_temperature + coef_process_temperature * process_temperature + coef_torque * torque + coef_speed * speed
 
 # Display the predicted amount
-st.write(f"Tool Wear : ${Tool_wear:.2f} min")
-
-# Set Y-axis limits
-y_min = 0
-y_max = 1200  # Adjust this based on your expected range
+st.write(f"Tool Wear: {tool_wear:.2f} min")
 
 # Visualize the predicted amount
-data = {'Category': ['Predicted'],
-        'Amount': [Tool_wear]}
-prediction_df = pd.DataFrame(data)
+fig, ax = plt.subplots(figsize=(6, 4))
 
 # Create the bar plot
-fig, ax = plt.subplots()
-bar_chart = ax.bar(prediction_df['Category'], prediction_df['Amount'], color=['orange'])
+bar_chart = ax.bar(["Predicted"], [tool_wear], color=['orange'])
 
 # Add labels and title
-ax.set_ylabel('Tool Wear /min')
+ax.set_ylabel('Tool Wear (min)')
 ax.set_title('Predicted Tool Wear Value')
 
-# Set Y-axis limits
-ax.set_ylim(y_min, y_max)
-
-# Add the predicted value as text on top of the predicted bar with unit
-ax.text(bar_chart[0].get_x() + bar_chart[0].get_width() / 2, Tool_wear + 5,
-        f'Predicted\n${Tool_wear:.2f}', ha='center', color='orange')
+# Add the predicted value as text on top of the bar with unit
+ax.text(bar_chart[0].get_x() + bar_chart[0].get_width() / 2, tool_wear + 5,
+        f'Predicted\n{tool_wear:.2f} min', ha='center', color='orange')
 
 # Display the plot
 st.pyplot(fig)
